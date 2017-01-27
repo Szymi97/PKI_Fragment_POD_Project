@@ -1,0 +1,9 @@
+d:\users\szymon\documents\visual studio 2013\Projects\POD_PKI\POD_PKI\bin\Debug\POD_PKI.exe.config
+d:\users\szymon\documents\visual studio 2013\Projects\POD_PKI\POD_PKI\bin\Debug\POD_PKI.exe
+d:\users\szymon\documents\visual studio 2013\Projects\POD_PKI\POD_PKI\bin\Debug\POD_PKI.pdb
+d:\users\szymon\documents\visual studio 2013\Projects\POD_PKI\POD_PKI\obj\Debug\POD_PKI.csprojResolveAssemblyReference.cache
+d:\users\szymon\documents\visual studio 2013\Projects\POD_PKI\POD_PKI\obj\Debug\POD_PKI.PINIONDZE.resources
+d:\users\szymon\documents\visual studio 2013\Projects\POD_PKI\POD_PKI\obj\Debug\POD_PKI.Properties.Resources.resources
+d:\users\szymon\documents\visual studio 2013\Projects\POD_PKI\POD_PKI\obj\Debug\POD_PKI.csproj.GenerateResource.Cache
+d:\users\szymon\documents\visual studio 2013\Projects\POD_PKI\POD_PKI\obj\Debug\POD_PKI.exe
+d:\users\szymon\documents\visual studio 2013\Projects\POD_PKI\POD_PKI\obj\Debug\POD_PKI.pdb

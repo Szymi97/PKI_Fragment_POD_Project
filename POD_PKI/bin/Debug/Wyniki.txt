@@ -1,0 +1,8 @@
+Skrót MD5        Numer Konta Odbiorcy        Nazwa        Wartość Przelewu       Adres       Kod Pocztowy        Miasto      Tytuł
+c2f4f009635d6270f15033cf5c8b7439 00001111222233334444555566 sadsadasdd 123456.89 dasdsadasdas 12345 asdasdasdas asdasdasdasdas
+c2f4f009635d6270f15033cf5c8b7439 00001111222233334444555566 sadsadasdd 123456.89 dasdsadasdas 12345 asdasdasdas asdasdasdasdas
+c2f4f009635d6270f15033cf5c8b7439 00001111222233334444555566 sadsadasdd 123456.89 dasdsadasdas 12345 asdasdasdas asdasdasdasdas
+c2f4f009635d6270f15033cf5c8b7439 00001111222233334444555566 sadsadasdd 123456.89 dasdsadasdas 12345 asdasdasdas asdasdasdasdas
+c2f4f009635d6270f15033cf5c8b7439 00001111222233334444555566 sadsadasdd 123456.89 dasdsadasdas 12345 asdasdasdas asdasdasdasdas
+c2f4f009635d6270f15033cf5c8b7439 00001111222233334444555566 sadsadasdd 123456.89 dasdsadasdas 12345 asdasdasdas asdasdasdasdas
+c2f4f009635d6270f15033cf5c8b7439 00001111222233334444555566 sadsadasdd 123456.89 dasdsadasdas 12345 asdasdasdas asdasdasdasdas
