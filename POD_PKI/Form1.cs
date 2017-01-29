@@ -21,8 +21,9 @@ namespace POD_PKI
         {
             InitializeComponent();
             label_AllMoney.Text = AllMoneyD.ToString();
-            File.AppendAllText(@"Wyniki.txt", "Skrót MD5 Numer Konta Odbiorcy Nazwa "+
-                                 "Wartość Przelewu Adres Kod Pocztowy Miasto Tytuł\r\n");
+            DateTime thisDay = DateTime.Today;
+            File.AppendAllText(@"Przelewy.txt", thisDay.ToString("d") + "\r\n" + "IdPrzelewu SkrótMD5 NumerKontaOdbiorcy NazwaOdbiorcy " +
+                                 "WartośćPrzelewu AdresOdbiorcy KodPocztowy Miasto Tytuł\r\n");
             File.AppendAllText(@"Logs.txt", "");
         }
 
@@ -85,10 +86,13 @@ namespace POD_PKI
             if(IsAllOk())
             {
                 DoTransfer();
+                File.AppendAllText(@"Logs.txt", "Client: Tranzakcja przebiegła pomyślnie\r\n");
                 MessageBox.Show("Tranzakcja przebiegła pomyślnie", "Przelew", MessageBoxButtons.OK);
+
             }
             else 
             {
+                File.AppendAllText(@"Logs.txt", "Client: Sprawdź dane i spróbuj ponownie\r\n");
                 MessageBox.Show("Sprawdź dane i spróbuj ponownie", "Nieprawidłowe dane", MessageBoxButtons.OK);
             }
         }
@@ -113,36 +117,49 @@ namespace POD_PKI
             {
                 textBox_Zł.Clear();
                 textBox_Gr.Clear();
+                File.AppendAllText(@"Logs.txt", "Client: Brak wystarczających środków na koncie\r\n");
                 return false;
             }
 
             if(textBox_AccountNumber.Text.Length != 26)
             {
                 textBox_AccountNumber.Clear();
+                File.AppendAllText(@"Logs.txt", "Client: Za krótki numer konta\r\n");
                 return false;
             }
 
             if (textBox_Name.Text.Length < 1 || textBox_Name.Text == "Podaj dane odbiorcy")
             {
                 textBox_Name.Text = "Podaj dane odbiorcy";
+                File.AppendAllText(@"Logs.txt", "Client: Zła nazwa/imie i nazwisko odbiorcy\r\n");
                 return false;
             }
 
             if (textBox_Address.Text.Length < 1 || textBox_Address.Text == "Podaj dane odbiorcy")
             {
                 textBox_Address.Text = "Podaj dane odbiorcy";
+                File.AppendAllText(@"Logs.txt", "Client: Zły adres odbiorcy\r\n");
                 return false;
             }
 
-            if (textBox_PostCode.Text.Length < 1 || textBox_PostCode.Text == "00000")
+            if (textBox_PostCode.Text.Length != 5 || textBox_PostCode.Text == "00000")
             {
                 textBox_PostCode.Text = "00000";
+                File.AppendAllText(@"Logs.txt", "Client: Zły kod pocztowy odbiorcy\r\n");
                 return false;
             }
 
             if (textBox_City.Text.Length < 1 || textBox_City.Text == "Podaj dane odbiorcy")
             {
                 textBox_City.Text = "Podaj dane odbiorcy";
+                File.AppendAllText(@"Logs.txt", "Client: Zła nazwa miasta odbiorcy\r\n");
+                return false;
+            }
+
+            if (textBox_Note.Text.Length < 1 || textBox_Note.Text == "Dodaj tytuł przelewu")
+            {
+                textBox_Note.Text = "Dodaj tytuł przelewu";
+                File.AppendAllText(@"Logs.txt", "Client: Zły tytuł przelewu\r\n");
                 return false;
             }
 
@@ -153,7 +170,8 @@ namespace POD_PKI
         /// <summary>
         /// Main Function
         /// </summary>
-        int idTransfer = 1;
+        static int idTransfer = 1;
+        static SymmetricAlgorithm sa;
         private void DoTransfer()
         {
             string source = textBox_AccountNumber.Text + " " + textBox_Name.Text + " " +
@@ -161,89 +179,83 @@ namespace POD_PKI
                             textBox_Address.Text + " " + textBox_PostCode.Text + " " +
                             textBox_City.Text + " " + textBox_Note.Text;
 
+            File.AppendAllText(@"Logs.txt", "Client: source - " + source + "\r\n");
+
             MD5 md5Hash = MD5.Create();
             string hashClient = GetMd5Hash(md5Hash, source);
 
-            string messageToServer = PrepareItForServer(hashClient + " " + source);
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            sa = new TripleDESCryptoServiceProvider();
 
-            if(messageToServer == null)
+            var msgFromClientToServer = hashClient + " " + source; //tworzymy wiadomosc dla serwera
+
+            var encryptMsg = Encrypt(msgFromClientToServer); //szyfrujemy ją
+
+            var responseFromServer = Server(encryptMsg); //wysyłamy i czekamy na odpowiedz
+
+            var msgFromServer = Decrypt(responseFromServer);
+            string[] sourceSplit = msgFromServer.Split(' ');
+
+            string hashServerName = GetMd5Hash(md5Hash, sourceSplit[1]);
+
+            if (hashServerName == sourceSplit[0])
+            {
+                File.AppendAllText(@"Przelewy.txt", idTransfer + " " + hashClient + " " + source + "\r\n");
+                File.AppendAllText(@"Logs.txt", "Client: idTransfer - " + idTransfer + " | hash - " + hashClient + " | source - " + source + "\r\n");
+                idTransfer++;
+
+                UpdateAllMoney();
+            }
+            else
+            {
+                MessageBox.Show("Wystąpił błąd", "Wystąpił błąd", MessageBoxButtons.OK);
+                File.AppendAllText(@"Logs.txt", "Client: MessageBoxError \r\n");
                 return;
-
-            string messageFromServer = ResponseFromServer(messageToServer);
-            
-            if (messageFromServer == null)
-            {
-                if (!IsItGoodServer(messageFromServer))
-                {
-                    MessageBox.Show("Wystąpił błąd", "Wystąpił błąd", MessageBoxButtons.OK);
-                    return;
-                }
-                else
-                {
-                    File.AppendAllText(@"Wyniki.txt", idTransfer + " " + hashClient + " " + source + "\r\n");
-                    File.AppendAllText(@"Logs.txt", "idTransfer + hash + source " + idTransfer + " " + hashClient + " " + source + "\r\n");
-                    idTransfer++;
-
-                    UpdateAllMoney();
-                }    
             }
         }
 
-        private bool IsItGoodServer(string messageFromServer)
-        {
-
-            try
-            {
-                //Create a UnicodeEncoder to convert between byte array and string.
-                UnicodeEncoding ByteConverter = new UnicodeEncoding();
-
-                //Create byte arrays to hold original, encrypted, and decrypted data.
-                byte[] dataToDecrypt = ByteConverter.GetBytes(messageFromServer);
-                byte[] decryptedData;
-
-                //Create a new instance of RSACryptoServiceProvider to generate
-                //public and private key data.
-                using (RSA_Client)
-                {
-                    decryptedData = RSAEncrypt(dataToDecrypt, RSA_Client.ExportParameters(true), false); //RSA_Client.ExportParameters(false) to publiczny klucz
-                    decryptedData = RSAEncrypt(decryptedData, RSA_Server.ExportParameters(false), false); //RSA_Client.ExportParameters(false) to publiczny klucz
-                }
-
-                messageFromServer = ByteConverter.GetString(decryptedData);
-                string[] sourceServer = messageFromServer.Split(' ');
-                string source = "";
-
-                for (int i = 1; i < sourceServer.Length; i++)
-                {
-                    source += sourceServer[i];
-
-                    if (i != sourceServer.Length)
-                        source += " ";
-                }
-
-                MD5 md5Hash = MD5.Create();
-                string hash = GetMd5Hash(md5Hash, source);
-
-                if (hash == sourceServer[0])
-                {
-                    File.AppendAllText(@"Logs.txt", "Client: hash " + hash + "\r\n");
-                    return true;
-                }
-                else
-                    return false;
-            }
-            catch (ArgumentNullException)
-            {
-                return false;
-            }
-        }
-
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         private void UpdateAllMoney()
         {
             AllMoneyD -= Money;
+            File.AppendAllText(@"Logs.txt", "Client: AllMoney - " + AllMoneyD + "\r\n");
             label_AllMoney.Text = AllMoneyD.ToString();
         }
 
+
+        /////////////////////////////////////SERVER///////////////////////////////////////////////////////////////
+        private byte[] Server(byte[] messageFromClient)
+        {
+            var msg2 = Decrypt(messageFromClient);
+            string[] sourceSplit = msg2.Split(' ');
+            string source = "";
+
+            for(int i = 1; i < sourceSplit.Length; i++)
+            {
+                source += sourceSplit[i];
+            }
+
+            MD5 md5Hash = MD5.Create();
+            string hashServer = GetMd5Hash(md5Hash, source);
+
+            string hashServerName = GetMd5Hash(md5Hash,"ServerSzymi");
+
+            if (hashServer == sourceSplit[0])
+            {
+                var response = Encrypt(hashServerName + " ServerSzymi " + hashServer + " YES");
+                File.AppendAllText(@"Logs.txt", "Server: hashServerName - " + hashServerName + " | hashServer - " + hashServer + " | response - YES\r\n");
+                return response;
+            }
+            else
+            {
+                var response = Encrypt(hashServerName + " ServerSzymi " + hashServer + " NO");
+                File.AppendAllText(@"Logs.txt", "Server: hashServerName - " + hashServerName + " | hashServer - " + hashServer + " | response - NO\r\n");
+                return response;
+            }
+                
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         static string GetMd5Hash(MD5 md5Hash, string input)
         {
 
@@ -264,163 +276,41 @@ namespace POD_PKI
             // Return the hexadecimal string.
             return sBuilder.ToString();
         }
-        ///////////////////////////////////////////////////////////////////////////////////////// 
-        static RSACryptoServiceProvider RSA_Client = new RSACryptoServiceProvider();
-        static RSACryptoServiceProvider RSA_Server = new RSACryptoServiceProvider();
-        private string PrepareItForServer(string stringIn)
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        static private byte[] Encrypt(string text)
         {
-            try
+            ICryptoTransform encryptor = sa.CreateEncryptor(sa.Key, sa.IV);
+
+            using (var msEncrypt = new MemoryStream())
             {
-                UnicodeEncoding ByteConverter = new UnicodeEncoding();
-
-                byte[] dataToEncrypt = ByteConverter.GetBytes(stringIn);
-                byte[] encryptedData;
-                
-
-                encryptedData = RSAEncrypt(dataToEncrypt, RSA_Client.ExportParameters(true), false); //RSA_Client.ExportParameters(false) to publiczny klucz
-                encryptedData = RSAEncrypt(encryptedData, RSA_Server.ExportParameters(false), false); //RSA_Client.ExportParameters(false) to publiczny klucz
-
-
-                return ByteConverter.GetString(encryptedData);
-            }
-            catch (ArgumentNullException)
-            {
-                return null;
+                using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                {
+                    using (var swEncrypt = new StreamWriter(csEncrypt))
+                    {
+                        swEncrypt.Write(text);
+                    }
+                    return msEncrypt.ToArray();
+                }
             }
         }
 
-        static public byte[] RSAEncrypt(byte[] DataToEncrypt, RSAParameters RSAKeyInfo, bool DoOAEPPadding)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        static private string Decrypt(byte[] msg)
         {
-            try
+            ICryptoTransform decryptor = sa.CreateDecryptor(sa.Key, sa.IV);
+            using (var msDecrypt = new MemoryStream(msg))
             {
-                byte[] encryptedData;
-                //Create a new instance of RSACryptoServiceProvider.
-                using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+                using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                 {
-
-                    //Import the RSA Key information. This only needs
-                    //to include the public key information.
-                    RSA.ImportParameters(RSAKeyInfo);
-
-                    //Encrypt the passed byte array and specify OAEP padding.  
-                    //OAEP padding is only available on Microsoft Windows XP or
-                    //later.  
-                    encryptedData = RSA.Encrypt(DataToEncrypt, DoOAEPPadding);
+                    using (var srDecrypt = new StreamReader(csDecrypt))
+                    {
+                        return srDecrypt.ReadToEnd();
+                    }
                 }
-                return encryptedData;
-            }
-            //Catch and display a CryptographicException  
-            //to the console.
-            catch (CryptographicException e)
-            {
-                MessageBox.Show(e.Message);
-                return null;
-            }
-
-        }
-
-        static public byte[] RSADecrypt(byte[] DataToDecrypt, RSAParameters RSAKeyInfo, bool DoOAEPPadding)
-        {
-            try
-            {
-                byte[] decryptedData;
-                //Create a new instance of RSACryptoServiceProvider.
-                using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
-                {
-                    //Import the RSA Key information. This needs
-                    //to include the private key information.
-                    RSA.ImportParameters(RSAKeyInfo);
-
-                    //Decrypt the passed byte array and specify OAEP padding.  
-                    //OAEP padding is only available on Microsoft Windows XP or
-                    //later.  
-                    decryptedData = RSA.Decrypt(DataToDecrypt, DoOAEPPadding);
-                }
-                return decryptedData;
-            }
-            //Catch and display a CryptographicException  
-            //to the console.
-            catch (CryptographicException e)
-            {
-                MessageBox.Show(e.Message);
-                return null;
             }
         }
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////
-
-        string serverName = "ServerSzymi";
-        private string ResponseFromServer(string messageToServer)
-        {
-            try
-            {
-                //Create a UnicodeEncoder to convert between byte array and string.
-                UnicodeEncoding ByteConverter = new UnicodeEncoding();
-
-                //Create byte arrays to hold original, encrypted, and decrypted data.
-                byte[] dataToDecrypt = ByteConverter.GetBytes(messageToServer);
-                byte[] decryptedData;
-
-                //Create a new instance of RSACryptoServiceProvider to generate
-                //public and private key data.
-                using (RSA_Server)
-                {
-                    decryptedData = RSAEncrypt(dataToDecrypt, RSA_Server.ExportParameters(true), false); //RSA_Client.ExportParameters(false) to publiczny klucz
-                    decryptedData = RSAEncrypt(decryptedData, RSA_Client.ExportParameters(false), false); //RSA_Client.ExportParameters(false) to publiczny klucz
-                }
-
-                string messageFromClient = ByteConverter.GetString(decryptedData);
-                string[] sourceClient = messageFromClient.Split(' ');
-                string source = "";
-
-                for(int i = 1; i < sourceClient.Length; i++)
-                {
-                    source += sourceClient[i];
-                    
-                    if(i != sourceClient.Length)
-                        source += " ";
-                }
-
-                MD5 md5Hash = MD5.Create();
-                string hash = GetMd5Hash(md5Hash, source);
-
-                if (hash == sourceClient[0])
-                {
-                    string serverMD5 = GetMd5Hash(md5Hash, serverName + " " + sourceClient[0]);
-                    File.AppendAllText(@"Logs.txt", "Server: serverMD5 " + serverMD5 + "\r\n");
-                    return serverMD5 + ConfirmTransfer(serverMD5);
-                }
-                else
-                    return null;
-            }
-            catch (ArgumentNullException)
-            {
-                return null;
-            }
-        }
-
-        private string ConfirmTransfer(string stringIn)
-        {
-            try
-            {
-                UnicodeEncoding ByteConverter = new UnicodeEncoding();
-
-                byte[] dataToEncrypt = ByteConverter.GetBytes(stringIn);
-                byte[] encryptedData;
-
-                using (RSA_Client)
-                {
-                    encryptedData = RSAEncrypt(dataToEncrypt, RSA_Server.ExportParameters(true), false); //RSA_Client.ExportParameters(false) to publiczny klucz
-                    encryptedData = RSAEncrypt(encryptedData, RSA_Client.ExportParameters(false), false); //RSA_Client.ExportParameters(false) to publiczny klucz
-                }
-
-                File.AppendAllText(@"Logs.txt", "Server: ByteConverter.GetString(encryptedData) " + ByteConverter.GetString(encryptedData) + "\r\n");
-                return ByteConverter.GetString(encryptedData);
-            }
-            catch (ArgumentNullException)
-            {
-                return null;
-            }
-        }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

@@ -1,0 +1,41 @@
+Client: source - 00001111222233334444555566 sssssssssss 123456.89 ddddddddddd 12345 eeeeeeee eeeeeeeeeeeee
+Server: hashServerName - 9fff3fe16a4b2d6a703baf9360015ba7 | hashServer - 7c11d7867dacf44165c8cf639fd26016 | response - NO
+Client: idTransfer - 1 | hash - 0ae0f6eae7ffa287df98c3a9b4536291 | source - 00001111222233334444555566 sssssssssss 123456.89 ddddddddddd 12345 eeeeeeee eeeeeeeeeeeee
+Client: AllMoney - 9000000
+Client: Tranzakcja przebiegła pomyślnie
+Client: source - 55555555555555555555555555 234234324 222222.89 dd5325235235 12345 532523523532 532523523532dfregrhh
+Server: hashServerName - 9fff3fe16a4b2d6a703baf9360015ba7 | hashServer - 68d36df965eefa24899c6176c600f3fa | response - NO
+Client: idTransfer - 2 | hash - 6b7c7694b0ba5dbe828a4966075b9443 | source - 55555555555555555555555555 234234324 222222.89 dd5325235235 12345 532523523532 532523523532dfregrhh
+Client: AllMoney - 8777777,11
+Client: Tranzakcja przebiegła pomyślnie
+Client: Zły tytuł przelewu
+Client: Sprawdź dane i spróbuj ponownie
+Client: source - 55555555555555555555555555 234234324 222222.89 dd5325235235 12345 532523523532 9oilllllllllllllll
+Server: hashServerName - 9fff3fe16a4b2d6a703baf9360015ba7 | hashServer - b5f252020f9960501cb5135f1ede40ea | response - NO
+Client: idTransfer - 3 | hash - 4c0a47fb9e55e01c6350c71e92d57040 | source - 55555555555555555555555555 234234324 222222.89 dd5325235235 12345 532523523532 9oilllllllllllllll
+Client: AllMoney - 8555554,22
+Client: Tranzakcja przebiegła pomyślnie
+Client: source - 55555555555555555555555555 234234324 222222.89 ujiujujhi 12345 532523523532 9oilllllllllllllll
+Server: hashServerName - 9fff3fe16a4b2d6a703baf9360015ba7 | hashServer - 8c3ecd5ee84ea02cae2ea9431559eaf8 | response - NO
+Client: idTransfer - 4 | hash - ecfd522a15622edb4fab965a11fbe815 | source - 55555555555555555555555555 234234324 222222.89 ujiujujhi 12345 532523523532 9oilllllllllllllll
+Client: AllMoney - 8333331,33
+Client: Tranzakcja przebiegła pomyślnie
+Client: Zły adres odbiorcy
+Client: Sprawdź dane i spróbuj ponownie
+Client: source - 55555555555555555555555555 234234324 222222.89 8888888888888888888888 12345 532523523532 9oilllllllllllllll
+Server: hashServerName - 9fff3fe16a4b2d6a703baf9360015ba7 | hashServer - c64f76123d29fdb28f8a4207a56f9b78 | response - NO
+Client: idTransfer - 5 | hash - 757ab03813912c2aeb53a58cc0b64980 | source - 55555555555555555555555555 234234324 222222.89 8888888888888888888888 12345 532523523532 9oilllllllllllllll
+Client: AllMoney - 8111108,44
+Client: Tranzakcja przebiegła pomyślnie
+Client: source - 55555555555555555555555555 uojkolkoijo 222222.89 8888888888888888888888 12345 532523523532 9oilllllllllllllll
+Server: hashServerName - 9fff3fe16a4b2d6a703baf9360015ba7 | hashServer - 124d5c39c7876d23d28e47e109df3303 | response - NO
+Client: idTransfer - 6 | hash - 18f0d9bf9c6821be6d22a884c0278e4d | source - 55555555555555555555555555 uojkolkoijo 222222.89 8888888888888888888888 12345 532523523532 9oilllllllllllllll
+Client: AllMoney - 7888885,55
+Client: Tranzakcja przebiegła pomyślnie
+Client: Zła nazwa/imie i nazwisko odbiorcy
+Client: Sprawdź dane i spróbuj ponownie
+Client: source - 55555555555555555555555555 iuhiuhiygihgiy 222222.89 8888888888888888888888 12345 532523523532 9oilllllllllllllll
+Server: hashServerName - 9fff3fe16a4b2d6a703baf9360015ba7 | hashServer - 385c04cdd17a99821e8a25e6e71360a3 | response - NO
+Client: idTransfer - 7 | hash - 57aadc79631e20f93c73d17e9197a4a8 | source - 55555555555555555555555555 iuhiuhiygihgiy 222222.89 8888888888888888888888 12345 532523523532 9oilllllllllllllll
+Client: AllMoney - 7666662,66
+Client: Tranzakcja przebiegła pomyślnie
