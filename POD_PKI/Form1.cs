@@ -187,8 +187,12 @@ namespace POD_PKI
             var msgFromClientToServer = hashClient + " " + source; //tworzymy wiadomosc dla serwera
 
             var encryptMsg = Encrypt(msgFromClientToServer); //szyfrujemy ją
+            string encryptMsgLog = "";
 
-            File.AppendAllText(@"Logs.txt", "Client: encryptMsg - " + encryptMsg + "\r\n");
+            foreach (var elem in encryptMsg)
+                encryptMsgLog += Convert.ToInt64(elem);
+
+            File.AppendAllText(@"Logs.txt", "Client: encryptMsg - " + encryptMsgLog + "\r\n");
 
             var responseFromServer = Server(encryptMsg); //wysyłamy i czekamy na odpowiedz
 
@@ -254,13 +258,25 @@ namespace POD_PKI
             if (hashServer == sourceSplit[0])
             {
                 var response = Encrypt(hashServerName + " ServerSzymi " + hashServer + " YES");
-                File.AppendAllText(@"Logs.txt", "Server: hashServerName - " + hashServerName + " | hashServer - " + hashServer + " | response - " + response + " YES\r\n");
+
+                string responseLog = "";
+
+                foreach (var elem in response)
+                    responseLog += Convert.ToInt64(elem);
+
+                File.AppendAllText(@"Logs.txt", "Server: hashServerName - " + hashServerName + " | hashServer - " + hashServer + " | response - " + responseLog + " YES\r\n");
                 return response;
             }
             else
             {
                 var response = Encrypt(hashServerName + " ServerSzymi " + hashServer + " NO");
-                File.AppendAllText(@"Logs.txt", "Server: hashServerName - " + hashServerName + " | hashServer - " + hashServer + " | response - " + response + " NO\r\n");
+
+                string responseLog = "";
+
+                foreach (var elem in response)
+                    responseLog += Convert.ToInt64(elem);
+
+                File.AppendAllText(@"Logs.txt", "Server: hashServerName - " + hashServerName + " | hashServer - " + hashServer + " | response - " + responseLog + " NO\r\n");
                 return response;
             }
                 
