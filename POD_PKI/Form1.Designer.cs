@@ -57,6 +57,7 @@
             this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
             this.button_DoIt = new System.Windows.Forms.Button();
             this.button_Clear = new System.Windows.Forms.Button();
+            this.checkBoxNO = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
@@ -468,6 +469,7 @@
             this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel10.Controls.Add(this.button_DoIt, 2, 0);
             this.tableLayoutPanel10.Controls.Add(this.button_Clear, 1, 0);
+            this.tableLayoutPanel10.Controls.Add(this.checkBoxNO, 0, 0);
             this.tableLayoutPanel10.Location = new System.Drawing.Point(3, 392);
             this.tableLayoutPanel10.Name = "tableLayoutPanel10";
             this.tableLayoutPanel10.RowCount = 1;
@@ -499,6 +501,17 @@
             this.button_Clear.UseVisualStyleBackColor = true;
             this.button_Clear.Click += new System.EventHandler(this.button_Clear_Click);
             // 
+            // checkBoxNO
+            // 
+            this.checkBoxNO.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxNO.AutoSize = true;
+            this.checkBoxNO.Location = new System.Drawing.Point(3, 22);
+            this.checkBoxNO.Name = "checkBoxNO";
+            this.checkBoxNO.Size = new System.Drawing.Size(88, 17);
+            this.checkBoxNO.TabIndex = 2;
+            this.checkBoxNO.Text = "Generuj błąd";
+            this.checkBoxNO.UseVisualStyleBackColor = true;
+            // 
             // PINIONDZE
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -525,6 +538,7 @@
             this.tableLayoutPanel9.ResumeLayout(false);
             this.tableLayoutPanel9.PerformLayout();
             this.tableLayoutPanel10.ResumeLayout(false);
+            this.tableLayoutPanel10.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -560,6 +574,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel10;
         private System.Windows.Forms.Button button_DoIt;
         private System.Windows.Forms.Button button_Clear;
+        private System.Windows.Forms.CheckBox checkBoxNO;
     }
 }
 

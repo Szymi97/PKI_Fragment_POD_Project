@@ -22,9 +22,9 @@ namespace POD_PKI
             InitializeComponent();
             label_AllMoney.Text = AllMoneyD.ToString();
             DateTime thisDay = DateTime.Today;
-            File.AppendAllText(@"Przelewy.txt", thisDay.ToString("d") + "\r\n" + "IdPrzelewu SkrótMD5 NumerKontaOdbiorcy NazwaOdbiorcy " +
+            File.AppendAllText(@"Transfers.txt", thisDay.ToString("d") + "\r\n" + "IdPrzelewu SkrótMD5 NumerKontaOdbiorcy NazwaOdbiorcy " +
                                  "WartośćPrzelewu AdresOdbiorcy KodPocztowy Miasto Tytuł\r\n");
-            File.AppendAllText(@"Logs.txt", "");
+            File.AppendAllText(@"Logs.txt", thisDay.ToString("d") + "\r\n");
         }
 
         private void textBox_Zł_KeyPress(object sender, KeyPressEventArgs e)
@@ -86,9 +86,6 @@ namespace POD_PKI
             if(IsAllOk())
             {
                 DoTransfer();
-                File.AppendAllText(@"Logs.txt", "Client: Tranzakcja przebiegła pomyślnie\r\n");
-                MessageBox.Show("Tranzakcja przebiegła pomyślnie", "Przelew", MessageBoxButtons.OK);
-
             }
             else 
             {
@@ -191,6 +188,8 @@ namespace POD_PKI
 
             var encryptMsg = Encrypt(msgFromClientToServer); //szyfrujemy ją
 
+            File.AppendAllText(@"Logs.txt", "Client: encryptMsg - " + encryptMsg + "\r\n");
+
             var responseFromServer = Server(encryptMsg); //wysyłamy i czekamy na odpowiedz
 
             var msgFromServer = Decrypt(responseFromServer);
@@ -198,13 +197,18 @@ namespace POD_PKI
 
             string hashServerName = GetMd5Hash(md5Hash, sourceSplit[1]);
 
-            if (hashServerName == sourceSplit[0])
+            if (sourceSplit[sourceSplit.Length-1] == "YES" && hashServerName == sourceSplit[0])
             {
-                File.AppendAllText(@"Przelewy.txt", idTransfer + " " + hashClient + " " + source + "\r\n");
-                File.AppendAllText(@"Logs.txt", "Client: idTransfer - " + idTransfer + " | hash - " + hashClient + " | source - " + source + "\r\n");
+                File.AppendAllText(@"Transfers.txt", idTransfer + " " + hashClient + " " + source + "\r\n");
+                File.AppendAllText(@"Logs.txt", "Client: idTransfer - " + idTransfer + " | hashClient - " + hashClient + " | source - " + source + "\r\n");
                 idTransfer++;
 
                 UpdateAllMoney();
+
+                File.AppendAllText(@"Logs.txt", "Client: Transakcja przebiegła pomyślnie\r\n");
+                MessageBox.Show("Transakcja przebiegła pomyślnie", "Przelew", MessageBoxButtons.OK);
+
+                return;
             }
             else
             {
@@ -227,12 +231,19 @@ namespace POD_PKI
         private byte[] Server(byte[] messageFromClient)
         {
             var msg2 = Decrypt(messageFromClient);
+
+            if (checkBoxNO.Checked == true)
+                msg2 += " 1";
+
             string[] sourceSplit = msg2.Split(' ');
             string source = "";
 
             for(int i = 1; i < sourceSplit.Length; i++)
             {
                 source += sourceSplit[i];
+                
+                if(i != sourceSplit.Length-1)
+                source += " ";
             }
 
             MD5 md5Hash = MD5.Create();
@@ -243,13 +254,13 @@ namespace POD_PKI
             if (hashServer == sourceSplit[0])
             {
                 var response = Encrypt(hashServerName + " ServerSzymi " + hashServer + " YES");
-                File.AppendAllText(@"Logs.txt", "Server: hashServerName - " + hashServerName + " | hashServer - " + hashServer + " | response - YES\r\n");
+                File.AppendAllText(@"Logs.txt", "Server: hashServerName - " + hashServerName + " | hashServer - " + hashServer + " | response - " + response + " YES\r\n");
                 return response;
             }
             else
             {
                 var response = Encrypt(hashServerName + " ServerSzymi " + hashServer + " NO");
-                File.AppendAllText(@"Logs.txt", "Server: hashServerName - " + hashServerName + " | hashServer - " + hashServer + " | response - NO\r\n");
+                File.AppendAllText(@"Logs.txt", "Server: hashServerName - " + hashServerName + " | hashServer - " + hashServer + " | response - " + response + " NO\r\n");
                 return response;
             }
                 

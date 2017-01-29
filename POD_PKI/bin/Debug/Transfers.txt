@@ -1,0 +1,7 @@
+29.01.2017
+IdPrzelewu SkrótMD5 NumerKontaOdbiorcy NazwaOdbiorcy WartośćPrzelewu AdresOdbiorcy KodPocztowy Miasto Tytuł
+1 f26b6843f45981687c09e324132ed80b 00001111222233334444555566 Szymon Kaszuba 123456.89 Polna 2 12345 Poznań Za las i pole
+2 16c70d9512e6e0542612973e1192253c 00001111222233334444555566 Szymon Kaszuba 5000.00 Polna 2 12345 Poznań Za las i pole
+3 16c70d9512e6e0542612973e1192253c 00001111222233334444555566 Szymon Kaszuba 5000.00 Polna 2 12345 Poznań Za las i pole
+4 3e5331541b46591fea1fceeb52aed6e6 00001111222233334444555566 Szymon Kaszuba 5000.01 Polna 2 12345 Poznań Za las i pole
+5 3e5331541b46591fea1fceeb52aed6e6 00001111222233334444555566 Szymon Kaszuba 5000.01 Polna 2 12345 Poznań Za las i pole
